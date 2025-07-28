@@ -1,101 +1,63 @@
 import random
 
+choices = {1: "剪刀", 2: "石頭", 3: "布"}
 
-
-while True:
-
-    tie=0
-    win=0
-    lose=0
-
-    name=input("請輸入名字:")
-
-    for i in range(1,4):
-
-        while True:
-
-            try:
-                player=int(input("請輸入招式:"))
-                if (player<1 or player>3):
-
-                    print("已超出範圍，請重新輸入")
-
-                else:
-                    break
-
-            except ValueError:
-                print("只能輸入數字,1~3")
-
-        computer=random.randint(1,3)
-
-        player_move="未知"
-        computer_move="未知"
-
-        if player==1:
-            player_move="剪刀"
-
-        elif player==2:
-            player_move="石頭"
-
-        else:
-            player_move="布"
-
-        if computer==1:
-            computer_move="剪刀"
-
-        elif computer==2:
-            computer_move="石頭"
-
-        else:
-            computer_move="布"
-
-
-        if player==computer:
-            print("平手"," 玩家動作:"+player_move+" 電腦動作:"+computer_move)
-            tie+=1
-        
-        elif player==1:
-            if computer==3:
-                print("玩家勝利"," 玩家動作:"+player_move+" 電腦動作:"+computer_move)
-                win+=1
-
+def get_user_choice():
+    while True:
+        try:
+            user = int(input("請輸入招式:1.剪刀 2.石頭 3.布: "))
+            if user in choices:
+                return user
             else:
-                print("電腦勝利,玩家失敗"," 玩家動作:"+player_move+" 電腦動作:"+computer_move)
-                lose+=1
+                print("請重新輸入 1,2,3")
+        except ValueError:
+            print("請重新輸入 1,2,3")
 
-        elif player==2:
-            if computer==1:
-                print("玩家勝利"," 玩家動作:"+player_move+" 電腦動作:"+computer_move)
-                win+=1
+def get_computer_choice():
+    return random.randint(1, 3)
 
-            else:
-                print("電腦勝利,玩家失敗"," 玩家動作:"+player_move+" 電腦動作:"+computer_move)
-                lose+=1
-
-        else:
-            if computer==2:
-                print("玩家勝利"," 玩家動作:"+player_move+" 電腦動作:"+computer_move)
-                win+=1
-
-            else:
-                print("電腦勝利,玩家失敗"," 玩家動作:"+player_move+" 電腦動作:"+computer_move)
-                lose+=1
-
-
-    if (tie>win) and (tie>lose):
-        print("最終平手,恭喜已完成遊戲!")
-    elif (win>tie) and (win>lose):
-        print("最終玩家獲勝,恭喜已完成遊戲!")
-
-    elif (lose>tie) and (lose>win):
-        print("最終電腦獲勝,再接再厲")
+def determine_winner(user, computer):
+    if user == computer:
+        return "平手"
+    elif (user == 1 and computer == 3) or \
+         (user == 2 and computer == 1) or \
+         (user == 3 and computer == 2):
+        return "玩家"
     else:
-        print("最終一勝一負一平手,再接再厲")
+        return "電腦"
 
-    again=input("是否要再玩一次?")
+def print_round_result(user, computer, winner):
+    print(f"玩家出：{choices[user]}, 電腦出：{choices[computer]}")
+    if winner == "平手":
+        print("結果: 平手\n")
+    else:
+        print(f"結果: {winner} 贏!\n")
 
-    if again.lower()!="y":
+def print_final_result(scores):
+    print("=== 最終戰績 ===")
+    print(f"玩家勝利: {scores['玩家']} 次")
+    print(f"電腦勝利: {scores['電腦']} 次")
+    print(f"平手次數: {scores['平手']} 次")
 
-        print("下次再來玩~~~")
+    if scores["玩家"] > scores["電腦"]:
+        print("恭喜玩家贏！")
+    elif scores["玩家"] < scores["電腦"]:
+        print("恭喜電腦贏！")
+    else:
+        print("雙方平手！")
 
-        break
+def play_game(round=3):
+    scores = {"玩家": 0, "電腦": 0, "平手": 0}
+    print("=== 歡迎來到剪刀石頭布 ===")
+
+    for _ in range(round):
+        user = get_user_choice()
+        computer = get_computer_choice()
+        winner = determine_winner(user, computer)
+        print_round_result(user, computer, winner)
+        scores[winner] += 1
+
+    print_final_result(scores)
+
+if __name__ == "__main__":
+    play_game()
